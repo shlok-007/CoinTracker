@@ -22,15 +22,16 @@ The components marked with ‘*’ were mandatory to use in the development.
   7. Arduino_Json.h
   
 Implementation: 
-  initialization of the Wi-Fi module and TFT display
-  connecting to the Wi-Fi network
-  making HTTP request to Coin Gecko API to fetch crcyptocurrency price
-  displaying crytocurrency data on TFT display
+  1. Initialization of the Wi-Fi module and TFT display
+  2. Connecting to the Wi-Fi network
+  3. Making an HTTP request to Coin Gecko API to fetch the cryptocurrency price
+  4. Displaying the cryptocurrency data on the TFT display
+
   
 Contributors:
-  Aniket Roy
-  Jatin Yadav
-  Kumar Saurabh
-  Manish Kausik Hari Baskar
-  Shlok Kumar Shaw
+  1. Aniket Roy
+  2. Jatin Yadav
+  3. Kumar Saurabh
+  4. Manish Kausik Hari Baskar
+  5. Shlok Kumar Shaw
   
