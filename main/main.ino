@@ -16,6 +16,8 @@
 #define BROWN   0xFB00
 #define DARKBROWN 0x8041
 
+#define host ""
+
 TFT_ILI9163C display = TFT_ILI9163C(10, 8, 9);
 
 // Replace with your network credentials
@@ -29,7 +31,7 @@ const char* api_key = "your_API_KEY";
 const char* crypto_id = "bitcoin";
 
 // Set the API endpoint
-const char* api_endpoint = "/coins/markets?vs_currency=usd&ids=";
+const char* api_endpoint = "/api/v3/simple/price?ids=vs_currency=usd&ids=";
 
 void setup() {
   Serial.begin(115200);
