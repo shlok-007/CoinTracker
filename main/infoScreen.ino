@@ -9,14 +9,16 @@
 #define GREEN 0x07E0
 #define YELLOW 0xFFE0  
 
-const int name_offset_x = 30,
+const int name_offset_x = 6,
           name_offset_y = 15,
-          line_spacing = 20,
+          line_spacing = 15,
           padding_x = 15;
 
 // TFT_eSPI display = TFT_eSPI(); 
 
-void infoScreen( DynamicJsonDocument doc, TFT_eSPI display, String name ){
+String coin_dat1[]= {"bitcoin","ethereum","tether","binancecoin","usd-coin","ripple","cardano","dogcoin"};
+
+void infoScreen( DynamicJsonDocument doc, TFT_eSPI display, String name, int coin_index ){
     
     //displaying name of coin
     display.setCursor( name_offset_x, name_offset_y );
@@ -29,50 +31,28 @@ void infoScreen( DynamicJsonDocument doc, TFT_eSPI display, String name ){
     display.setTextSize(1);
     display.setTextColor(YELLOW);
     display.print("Price: $ ");
-    display.print((String)doc["market_data"]["current_price"]["usd"]);
+    float temp = doc[coin_dat1[coin_index]]["usd"];
+    display.print(temp);
 
 
     //displaying recent price change
     display.setTextColor(WHITE);
     display.setCursor( padding_x, name_offset_y + 2*line_spacing );
-    display.print("1h");
-    display.setCursor( 3*padding_x, name_offset_y + 2*line_spacing );
-    display.print("24h");
-    display.setCursor( 5*padding_x, name_offset_y + 2*line_spacing );
-    display.print("7d");
-
+    display.print("Market Cap: $ ");
     display.setCursor( padding_x, name_offset_y + 3*line_spacing );
-    float temp = doc["market_data"]["price_change_percentage_1h_in_currency"]["usd"];
-    temp>0 ? display.setTextColor(GREEN) : display.setTextColor(RED);
-    display.print((String)temp);
-    display.print("%");
+    temp = doc[coin_dat1[coin_index]]["usd_market_cap"];
+    display.print(temp);
 
-    display.setCursor( 3*padding_x, name_offset_y + 3*line_spacing );
-    temp = doc["market_data"]["price_change_percentage_24h_in_currency"]["usd"];
-    temp>0 ? display.setTextColor(GREEN) : display.setTextColor(RED);
-    display.print((String)temp);
-    display.print("%");
-
-    display.setCursor( 5*padding_x, name_offset_y + 3*line_spacing );
-    temp = doc["market_data"]["price_change_percentage_7d_in_currency"]["usd"];
-    temp>0 ? display.setTextColor(GREEN) : display.setTextColor(RED);
-    display.print((String)temp);
-    display.print("%");
-
-
-    //displaying market sentiment
     display.setCursor( padding_x, name_offset_y + 4*line_spacing );
-    display.println("Market Sentiment: ");
-    display.setTextColor(GREEN);
+    display.print("24h vol: $ ");
     display.setCursor( padding_x, name_offset_y + 5*line_spacing );
-    display.print((String)doc["sentiment_votes_up_percentage"]);
-    display.print("%");
+    temp = doc[coin_dat1[coin_index]]["usd_24h_vol"];
+    display.print(temp);
 
-    display.setTextColor(WHITE);
-    display.print(" | ");
-
-    display.setTextColor(RED);
-    display.print((String)doc["sentiment_votes_down_percentage"]);
-    display.print("%");
+    display.setCursor( padding_x, name_offset_y + 6*line_spacing );
+    display.print("24h Change: $ ");
+    temp = doc[coin_dat1[coin_index]]["usd_24h_change"];
+    temp>0 ? display.setTextColor(GREEN) : display.setTextColor(RED);
+    display.print(temp);
 
 }

@@ -20,6 +20,7 @@ WiFiClientSecure client;    // Create a WiFi client object
 
 TFT_eSPI display = TFT_eSPI();
 
+const int jsonMaxSize = 384;
 
 void setup() {
 
@@ -56,11 +57,6 @@ void setup() {
 
   // client.setFingerprint(TEST_HOST_FINGERPRINT);
   client.setInsecure(); //Fingerprint wasn't able to be verified so, we removed the check
-
-  DynamicJsonDocument doc(192) ;
-  doc = makeHTTPRequest();
-
-  // infoScreen( doc, display, "Bitcoin" );
   // Serial.println(doc["market_data"]["current_price"]["usd"]);
   // String temp1 = doc["market_data"];
   // float temp1 = doc["market_data"]["price_change_percentage_24h_in_currency"]["usd"];
@@ -68,11 +64,11 @@ void setup() {
   // float temp1 = doc[0]["current_price"];
   // float temp2 = doc[0]["price_change_percentage_24h"];
   // String id = doc[0]["id"];
-  float pr = doc["bitcoin"]["usd"];
-  float cap = doc["bitcoin"]["usd_24h_vol"];
+  // float pr = doc["bitcoin"]["usd"];
+  // float cap = doc["usd-coin"]["usd"];
   // Serial.println(id);
-  Serial.println(pr);
-  Serial.println(cap);
+  // Serial.println(pr);
+  // Serial.println(cap);
   // Serial.println(typeof(doc["market_data"]["current_price"]["usd"]));
   // Serial.println(doc);
 
@@ -95,9 +91,9 @@ void setup() {
   // Serial.println(bitcoin_eur);
 }
 
-DynamicJsonDocument makeHTTPRequest() {
+DynamicJsonDocument makeHTTPRequest( String request ) {
 
-  DynamicJsonDocument doc(192);
+  DynamicJsonDocument doc(jsonMaxSize);
   // Opening connection to server
   if (!client.connect(TEST_HOST, 443))
   {
@@ -111,7 +107,7 @@ DynamicJsonDocument makeHTTPRequest() {
   client.print(F("GET "));
   // This is the second half of a request (everything that comes after the base URL)
   // client.print("/api/v3/coins/bitcoin?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false");
-  client.print("/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true");
+  client.print( request );
   // client.print("/api/v3/simple/price?ids=ethereum%2Cbitcoin&vs_currencies=usd%2Ceur");
   
   client.println(F(" HTTP/1.1"));
@@ -169,7 +165,23 @@ DynamicJsonDocument makeHTTPRequest() {
   }
 }
 
+String coin_dat2[]= {"bitcoin","ethereum","tether","binancecoin","usd-coin","ripple","cardano","dogcoin"};
+
 void loop() {
   // put your main code here, to run repeatedly:
+  String request1 = "/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true";
+  String request2 = "/api/v3/simple/price?ids=bitcoin%2Cethereum%2Ctether%2Cbinancecoin%2Cripple%2Cusd-coin%2Ccardano%2Cdogecoin&vs_currencies=usd";
+
+  for(int i=0;i<8;i++){
+    DynamicJsonDocument doc(jsonMaxSize) ;
+    doc = makeHTTPRequest(request1);
+
+    infoScreen( doc, display, coin_dat2[i], i );
+
+    DynamicJsonDocument doc2(jsonMaxSize) ;
+    doc2 = makeHTTPRequest(request2);
+    priceTraker(doc2, display, i);
+  }
+
 
 }
