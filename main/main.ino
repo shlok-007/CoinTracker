@@ -5,6 +5,7 @@
 #include <TFT_eSPI.h>
 
 #define BLACK 0X0000
+#define BLACK 0X0000
 #define WHITE 0xFFFF
 #define BLUE 0x201C
 #define RED 0xF800
