@@ -1,5 +1,6 @@
 #include <SPI.h>
 #include <TFT_eSPI.h>
+#include <string.h>
 
 #define BLACK 0X0000
 #define WHITE 0xFFFF
@@ -14,7 +15,8 @@ void setup() {
   display.fillScreen(BLACK);
   display.fillRect(2, 1, 128, 128, BLACK);
   display.setCursor(10,20);
-  display.print("Shlok");
+  String arr[] = {"Shlok", "Ani"};
+  display.print(arr[1]);
 
   // Checking Display Corners
   display.drawPixel(2,1,WHITE);

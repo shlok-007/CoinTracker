@@ -11,8 +11,10 @@
 
 const int name_offset_x = 30,
           name_offset_y = 15,
-          line_spacing = 10,
-          padding_x = 5;
+          line_spacing = 20,
+          padding_x = 15;
+
+// TFT_eSPI display = TFT_eSPI(); 
 
 String coin_dat[]= {"bitcoin","ethereum","tether","binancecoin","usd-coin","ripple","cardano","dogcoin"};
 
