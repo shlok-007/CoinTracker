@@ -1,6 +1,7 @@
 #include <SPI.h>
 #include <TFT_eSPI.h>
 #include <ArduinoJson.h>
+#include <string.h>
 
 #define BLACK 0X0000
 #define WHITE 0xFFFF
@@ -10,8 +11,10 @@
 
 const int name_offset_x = 30,
           name_offset_y = 15,
-          line_spacing = 10,
-          padding_x = 5;
+          line_spacing = 20,
+          padding_x = 15;
+
+// TFT_eSPI display = TFT_eSPI(); 
 
 void infoScreen( DynamicJsonDocument doc, TFT_eSPI display, String name ){
     
@@ -26,7 +29,7 @@ void infoScreen( DynamicJsonDocument doc, TFT_eSPI display, String name ){
     display.setTextSize(1);
     display.setTextColor(YELLOW);
     display.print("Price: $ ");
-    display.print(doc["market_data"]["current_price"]["usd"]);
+    display.print((String)doc["market_data"]["current_price"]["usd"]);
 
 
     //displaying recent price change
@@ -41,34 +44,35 @@ void infoScreen( DynamicJsonDocument doc, TFT_eSPI display, String name ){
     display.setCursor( padding_x, name_offset_y + 3*line_spacing );
     float temp = doc["market_data"]["price_change_percentage_1h_in_currency"]["usd"];
     temp>0 ? display.setTextColor(GREEN) : display.setTextColor(RED);
-    display.print(temp);
+    display.print((String)temp);
     display.print("%");
 
     display.setCursor( 3*padding_x, name_offset_y + 3*line_spacing );
     temp = doc["market_data"]["price_change_percentage_24h_in_currency"]["usd"];
     temp>0 ? display.setTextColor(GREEN) : display.setTextColor(RED);
-    display.print(temp);
+    display.print((String)temp);
     display.print("%");
 
     display.setCursor( 5*padding_x, name_offset_y + 3*line_spacing );
     temp = doc["market_data"]["price_change_percentage_7d_in_currency"]["usd"];
     temp>0 ? display.setTextColor(GREEN) : display.setTextColor(RED);
-    display.print(temp);
+    display.print((String)temp);
     display.print("%");
 
 
     //displaying market sentiment
     display.setCursor( padding_x, name_offset_y + 4*line_spacing );
-    display.print("Market Sentiment: ");
+    display.println("Market Sentiment: ");
     display.setTextColor(GREEN);
-    display.print(doc["sentiment_votes_up_percentage"]);
+    display.setCursor( padding_x, name_offset_y + 5*line_spacing );
+    display.print((String)doc["sentiment_votes_up_percentage"]);
     display.print("%");
 
     display.setTextColor(WHITE);
     display.print(" | ");
 
     display.setTextColor(RED);
-    display.print(doc["sentiment_votes_down_percentage"]);
+    display.print((String)doc["sentiment_votes_down_percentage"]);
     display.print("%");
 
 }
