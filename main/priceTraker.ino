@@ -11,34 +11,28 @@
 #define DRED 0x7841
 #define DGREEN 0x0266
 
-TFT_eSPI display = TFT_eSPI();       // Invoke custom library
+// TFT_eSPI display = TFT_eSPI();       // Invoke custom library
 
 int X_offSet= 2;
 int Y_offSet= 1;
 int cnDispWidth=20;
 int color=WHITE;
 
-typedef struct cryptoCoins{
-    String name;
-    int high;
-    int low;
-}crypC;
     
-    
-crypC coin_dat[]= {"bitcoin","ethereum","tether","binancecoin","usd-coin","ripple","cardano","dogcoin"};
-crypC coinSrtName[]= {"BTC","ETH","USDT","BNB","USDC","XRP","ADA","DOGE"};
+String coin_dat[]= {"bitcoin","ethereum","tether","binancecoin","usd-coin","ripple","cardano","dogcoin"};
+String coinSrtName[]= {"BTC","ETH","USDT","BNB","USDC","XRP","ADA","DOGE"};
 
 int cryptoLim[8][2] = {{2,5},{2,6},{45,76},{2,8},{21,342},{2,10},{34,244},{4,13}};
-// screen is of 127 * 127
+// screen is of 128 * 128
 
 int colorcheck(int indx,DynamicJsonDocument doc)
 {
   int val;
-  if(doc[coin_dat[indx]][usd]>cryptoLim[indx][1])
+  if(doc[coin_dat[indx]]["usd"]>cryptoLim[indx][1])
   val=GREEN;
-  if(doc[coin_dat[indx]][usd]<cryptoLim[indx][0])
+  if(doc[coin_dat[indx]]["usd"]<cryptoLim[indx][0])
   val=RED;
-  if(doc[coin_dat[indx]][usd]<=cryptoLim[indx][1] && coin_dat[indx]][usd]>=cryptoLim[indx][0])
+  if(doc[coin_dat[indx]]["usd"]<=cryptoLim[indx][1] && doc[coin_dat[indx]]["usd"]>=cryptoLim[indx][0])
   val=BLUE;
   return val;
 }
@@ -46,11 +40,11 @@ int colorcheck(int indx,DynamicJsonDocument doc)
 int colordeactivate(int indx,DynamicJsonDocument doc)
 {
   int val;
-  if(doc[coin_dat[indx]][usd]>cryptoLim[indx][1])
+  if(doc[coin_dat[indx]]["usd"]>cryptoLim[indx][1])
   val=DGREEN;
-  if(doc[coin_dat[indx]][usd]<cryptoLim[indx][0])
+  if(doc[coin_dat[indx]]["usd"]<cryptoLim[indx][0])
   val=DRED;
-  if(doc[coin_dat[indx]][usd]<=cryptoLim[indx][1] && coin_dat[indx]][usd]>=cryptoLim[indx][0])
+  if(doc[coin_dat[indx]]["usd"]<=cryptoLim[indx][1] && doc[coin_dat[indx]]["usd"]>=cryptoLim[indx][0])
   val=DBLUE;
   return val;
 }
@@ -58,19 +52,19 @@ int colordeactivate(int indx,DynamicJsonDocument doc)
 void priceTraker(DynamicJsonDocument doc,TFT_eSPI display,int indx) {
 
  color=colorcheck(indx,doc);
-  display.fillRect(2,1,107,8,color);
-  display.fillRect(2,120,107,8,color);
-  display.fillRect(2,1,8,128,color);
-  display.fillRect(101,1,8,128,color);
+  display.fillRect(2,1,107,3,color);
+  display.fillRect(2,126,107,3,color);
+  display.fillRect(2,1,3,128,color);
+  display.fillRect(106,1,8,128,color);
 
 for(int i=0;i<8;i++){
-    if(i==idx)
+    if(i==indx)
     color=colorcheck(i,doc);
     else
     color=colordeactivate(i,doc);
-    display.fillRect(110,1+8*i,20,16,color);
-    display.setCursor(112,3+8*i);
-    display.print(coinSrtName[indx]);
+    display.fillRect(110,1+16*i,20,16,color);
+    display.setCursor(112,3+16*i);
+    display.print(coinSrtName[i]);
 }
 
 }

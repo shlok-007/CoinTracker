@@ -9,14 +9,14 @@
 #define GREEN 0x07E0
 #define YELLOW 0xFFE0  
 
-const int name_offset_x = 30,
+const int name_offset_x = 6,
           name_offset_y = 15,
-          line_spacing = 20,
+          line_spacing = 15,
           padding_x = 15;
 
 // TFT_eSPI display = TFT_eSPI(); 
 
-String coin_dat[]= {"bitcoin","ethereum","tether","binancecoin","usd-coin","ripple","cardano","dogcoin"};
+String coin_dat1[]= {"bitcoin","ethereum","tether","binancecoin","usd-coin","ripple","cardano","dogcoin"};
 
 void infoScreen( DynamicJsonDocument doc, TFT_eSPI display, String name, int coin_index ){
     
@@ -31,7 +31,7 @@ void infoScreen( DynamicJsonDocument doc, TFT_eSPI display, String name, int coi
     display.setTextSize(1);
     display.setTextColor(YELLOW);
     display.print("Price: $ ");
-    float temp = doc[coin_dat[coin_index]]["usd"];
+    float temp = doc[coin_dat1[coin_index]]["usd"];
     display.print(temp);
 
 
@@ -40,18 +40,18 @@ void infoScreen( DynamicJsonDocument doc, TFT_eSPI display, String name, int coi
     display.setCursor( padding_x, name_offset_y + 2*line_spacing );
     display.print("Market Cap: $ ");
     display.setCursor( padding_x, name_offset_y + 3*line_spacing );
-    temp = doc[coin_dat[coin_index]]["usd_market_cap"];
+    temp = doc[coin_dat1[coin_index]]["usd_market_cap"];
     display.print(temp);
 
     display.setCursor( padding_x, name_offset_y + 4*line_spacing );
     display.print("24h vol: $ ");
     display.setCursor( padding_x, name_offset_y + 5*line_spacing );
-    temp = doc[coin_dat[coin_index]]["usd_24h_vol"];
+    temp = doc[coin_dat1[coin_index]]["usd_24h_vol"];
     display.print(temp);
 
     display.setCursor( padding_x, name_offset_y + 6*line_spacing );
     display.print("24h Change: $ ");
-    temp = doc[coin_dat[coin_index]]["usd_24h_change"];
+    temp = doc[coin_dat1[coin_index]]["usd_24h_change"];
     temp>0 ? display.setTextColor(GREEN) : display.setTextColor(RED);
     display.print(temp);
 
