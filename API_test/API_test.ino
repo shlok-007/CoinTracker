@@ -12,8 +12,8 @@ WiFiClientSecure client;
 // Just the base of the URL you want to connect to
 #define TEST_HOST "api.coingecko.com"
 
-// OPTIONAL - The finferprint of the site you want to connect to.
-#define TEST_HOST_FINGERPRINT "B3 DD 76 06 D2 B5 A8 B4 A1 37 71 DB EC C9 EE 1C EC AF A3 8A"
+// #define TEST_HOST_FINGERPRINT "B3 DD 76 06 D2 B5 A8 B4 A1 37 71 DB EC C9 EE 1C EC AF A3 8A"  //    SHA-1
+#define TEST_HOST_FINGERPRINT "3A BB E6 3D AF 75 6C 50 16 B6 B8 5F 52 01 5F D8 E8 AC BE 27 7C 50 87 B1 27 A6 05 63 A8 41 ED 8A"  //    SHA-256
 // The finger print will change every few months.
 
 
@@ -43,10 +43,10 @@ void setup() {
   //--------
 
   // If you don't need to check the fingerprint
-  // client.setInsecure();
+  client.setInsecure();
 
   // If you want to check the fingerprint
-  client.setFingerprint(TEST_HOST_FINGERPRINT);
+  // client.setFingerprint(TEST_HOST_FINGERPRINT);
 
   makeHTTPRequest();
 }
