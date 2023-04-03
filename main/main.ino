@@ -1,118 +1,139 @@
-#include <Wire.h>
-#include <Adafruit_GFX.h>
-#include <TFT_ILI9163C.h>
 #include <ESP8266WiFi.h>
 #include <WiFiClientSecure.h>
-#include <ArduinoJson.h>
+#include <ArduinoJson.h>  // Library used for parsing Json from the API responses
+#include <SPI.h>
+#include <TFT_eSPI.h>
 
-#define BLACK   0x0000
-#define BLUE    0x001F
-#define RED     0xF800
-#define GREEN   0x07E0
-#define CYAN    0x07FF
-#define MAGENTA 0xF81F
-#define YELLOW  0xFFE0  
-#define WHITE   0xFFFF
-#define BROWN   0xFB00
-#define DARKBROWN 0x8041
+char ssid[] = "BEAST_OP";       // network SSID (name)
+char password[] = "Shlok@*!))";  // network key
 
-#define host ""
+WiFiClientSecure client;    // Create a WiFi client object
 
-TFT_ILI9163C display = TFT_ILI9163C(10, 8, 9);
+// Just the base of the URL you want to connect to
+#define TEST_HOST "api.coingecko.com"
 
-// Replace with your network credentials
-const char* ssid = "your_SSID";
-const char* password = "your_PASSWORD";
+// #define TEST_HOST_FINGERPRINT "B3 DD 76 06 D2 B5 A8 B4 A1 37 71 DB EC C9 EE 1C EC AF A3 8A"  //    SHA-1
+#define TEST_HOST_FINGERPRINT "3A BB E6 3D AF 75 6C 50 16 B6 B8 5F 52 01 5F D8 E8 AC BE 27 7C 50 87 B1 27 A6 05 63 A8 41 ED 8A"  //    SHA-256
 
-// Replace with your Coin Gecko API key
-const char* api_key = "your_API_KEY";
-
-// Set the Crypto ID (you can find it in the Coin Gecko API documentation)
-const char* crypto_id = "bitcoin";
-
-// Set the API endpoint
-const char* api_endpoint = "/api/v3/simple/price?ids=vs_currency=usd&ids=";
 
 void setup() {
+
   Serial.begin(115200);
+
+  // Connect to the WiFI
+  WiFi.mode(WIFI_STA);
+  WiFi.disconnect();
   delay(100);
 
-  // Connect to Wi-Fi network
-  Serial.println();
-  Serial.print("Connecting to ");
+  // Attempt to connect to Wifi network:
+  Serial.print("Connecting Wifi: ");
   Serial.println(ssid);
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
     Serial.print(".");
+    delay(500);
   }
   Serial.println("");
-  Serial.println("WiFi connected.");
+  Serial.println("WiFi connected");
+  Serial.println("IP address: ");
+  IPAddress ip = WiFi.localIP();
+  Serial.println(ip);
 
-  // Initialize the OLED display
-  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
-    Serial.println("Failed to initialize OLED display.");
-    while (1);
+  //--------
+
+  // client.setFingerprint(TEST_HOST_FINGERPRINT);
+  client.setInsecure(); //Fingerprint wasn't able to be verified so, we removed the check
+
+  DynamicJsonDocument doc = makeHTTPRequest();
+
+  float ethereum_usd = doc["ethereum"]["usd"]; // 3961.66
+  float ethereum_eur = doc["ethereum"]["eur"]; // 3261.73
+
+  long bitcoin_usd = doc["bitcoin"]["usd"]; // 48924
+  long bitcoin_eur = doc["bitcoin"]["eur"]; // 40281
+
+  Serial.print("ethereum_usd: ");
+  Serial.println(ethereum_usd);
+  Serial.print("ethereum_eur: ");
+  Serial.println(ethereum_eur);
+
+  Serial.print("bitcoin_usd: ");
+  Serial.println(bitcoin_usd);
+  Serial.print("bitcoin_eur: ");
+  Serial.println(bitcoin_eur);
+}
+
+DynamicJsonDocument makeHTTPRequest() {
+
+  // Opening connection to server
+  if (!client.connect(TEST_HOST, 443))
+  {
+    Serial.println(F("Connection failed"));
+    return;
   }
 
-  // Clear the display buffer
-  display.clearDisplay();
+  yield();
 
-  // Set the text size and color
-  display.setTextSize(1);
-  display.setTextColor(WHITE);
+  // Send HTTP request
+  client.print(F("GET "));
+  // This is the second half of a request (everything that comes after the base URL)
+  client.print("/api/v3/simple/price?ids=ethereum%2Cbitcoin&vs_currencies=usd%2Ceur");
+  client.println(F(" HTTP/1.1"));
 
-  // Set the cursor position
-  display.setCursor(0, 0);
+  //Headers
+  client.print(F("Host: "));
+  client.println(TEST_HOST);
+
+  client.println(F("Cache-Control: no-cache"));
+
+  if (client.println() == 0)
+  {
+    Serial.println(F("Failed to send request"));
+    return;
+  }
+  // delay(100);
+
+  // Check HTTP status
+  char status[32] = {0};
+  client.readBytesUntil('\r', status, sizeof(status));
+  if (strcmp(status, "HTTP/1.1 200 OK") != 0)
+  {
+    Serial.print(F("Unexpected response: "));
+    Serial.println(status);
+    return;
+  }
+
+  // Skiping HTTP headers
+  char endOfHeaders[] = "\r\n\r\n";
+  if (!client.find(endOfHeaders))
+  {
+    Serial.println(F("Invalid response"));
+    return;
+  }
+
+  //to ignore random characters before the json
+  while (client.available() && client.peek() != '{')
+  {
+    char c = 0;
+    client.readBytes(&c, 1);
+    Serial.print(c);
+    Serial.println("BAD");
+  }
+
+  DynamicJsonDocument doc(192);
+
+  DeserializationError error = deserializeJson(doc, client);
+
+  if (!error) return doc; 
+  
+  else {
+    Serial.print(F("deserializeJson() failed: "));
+    Serial.println(error.f_str());
+    return doc;
+  }
 }
 
 void loop() {
-  // Create a secure client to connect to the Coin Gecko API
-  WiFiClientSecure client;
-  client.setInsecure();
+  // put your main code here, to run repeatedly:
 
-  // Connect to the Coin Gecko API
-  if (!client.connect("api.coingecko.com", 443)) {
-    Serial.println("Connection failed.");
-    return;
-  }
-
-  // Build the API URL
-  String url = String(api_endpoint) + String(crypto_id);
-
-  // Send the HTTP request
-  client.println(String("GET ") + url + " HTTP/1.1");
-  client.println(String("Host: ") + "api.coingecko.com");
-  client.println(String("Connection: close"));
-  client.println(String("X-CoinAPI-Key: ") + api_key);
-  client.println();
-
-  // Wait for the response
-  while (!client.available());
-
-  // Read the response into a string
-  String response = client.readString();
-
-  // Parse the JSON data
-  DynamicJsonDocument doc(1024);
-  DeserializationError error = deserializeJson(doc, response);
-
-  if (error) {
-    Serial.println("Failed to parse JSON data.");
-    return;
-  }
-
-  // Extract the relevant data from the JSON document
-  float price = doc[0]["current_price"];
-
-  // Display the data on the OLED display
-  display.clearDisplay();
-  display.setCursor(0, 0);
-  display.println("Bitcoin Price:");
-  display.print("$");
-  display.println(price, 2);
-  display.display();
-
-  // Wait for 5 seconds before updating the display
-  delay(1500);
 }
