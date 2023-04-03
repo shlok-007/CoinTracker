@@ -26,6 +26,7 @@ typedef struct cryptoCoins{
     
     
 crypC coin_dat[]= {"bitcoin","ethereum","tether","binancecoin","usd-coin","ripple","cardano","dogcoin"};
+crypC coinSrtName[]= {"BTC","ETH","USDT","BNB","USDC","XRP","ADA","DOGE"};
 
 int cryptoLim[8][2] = {{2,5},{2,6},{45,76},{2,8},{21,342},{2,10},{34,244},{4,13}};
 // screen is of 127 * 127
@@ -68,42 +69,9 @@ for(int i=0;i<8;i++){
     else
     color=colordeactivate(i,doc);
     display.fillRect(110,1+8*i,20,16,color);
+    display.setCursor(112,3+8*i);
+    display.print(coinSrtName[indx]);
 }
-
-
-
-//   display.fillRect(110,1,20,16,color);
-//   display.fillRect(110,9,20,16,color);
-//   display.fillRect(110,17,20,16,color);
-//   display.fillRect(110,25,20,16,color);
-//   display.fillRect(110,33,20,16,color);
-//   display.fillRect(110,41,20,16,color);
-//   display.fillRect(110,49,20,16,color);
-//   display.fillRect(110,57,20,16,color);
-
-
-  display.setCursor(10,20);
-  display.print("Shlok");
-
-  // Checking Display Corners
-  display.drawPixel(2,1,WHITE);
-  display.drawPixel(129,1,WHITE);
-  display.drawPixel(2,128,WHITE);
-  display.drawPixel(129,128,WHITE);
-
-  // for(int i=0;i<10;i++){
-  //   display.setRotation(i);
-  //   display.fillScreen(TFT_BLACK);
-  //   display.fillRect(0, 1, 128, 128, BLACK);
-  //   display.setCursor(50,50);
-  //   display.println(i);
-  //   display.println("Hii");
-  //   delay(1000);}
-
-
-
-
-  // put your setup code here, to run once:
 
 }
 
