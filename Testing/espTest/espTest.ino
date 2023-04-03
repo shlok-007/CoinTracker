@@ -1,11 +1,11 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
-#include <TFT_ILI9163C.h>
+// #include <TFT_ILI9163C.h>
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 // #include <WiFiClientSecure.h>
 #include <ESP8266HTTPClient.h>
-#include <Arduino_Json.h>
+// #include <Arduino_Json.h>
 
 const char* ssid = "BEAST_OP";
 const char* password = "Shlok@*!))";
