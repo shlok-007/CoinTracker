@@ -6,6 +6,17 @@
 
 #define BLACK 0X0000
 #define WHITE 0xFFFF
+#define BLUE 0x201C
+#define RED 0xF800
+#define GREEN 0x07E0
+#define CYAN 0x07FF
+#define YELLOW 0xFFE0
+
+const int name_offset_x_1 = 8,
+          name_offset_y_1 = 8,
+          line_spacing_1 = 15,
+          padding_x_1 = 10;
+
 
 char ssid[] = "BEAST_OP";       // network SSID (name)
 char password[] = "Shlok@*!))";  // network key
@@ -16,7 +27,7 @@ WiFiClientSecure client;    // Create a WiFi client object
 #define TEST_HOST "api.coingecko.com"
 
 // #define TEST_HOST_FINGERPRINT "B3 DD 76 06 D2 B5 A8 B4 A1 37 71 DB EC C9 EE 1C EC AF A3 8A"  //    SHA-1
-#define TEST_HOST_FINGERPRINT "3A BB E6 3D AF 75 6C 50 16 B6 B8 5F 52 01 5F D8 E8 AC BE 27 7C 50 87 B1 27 A6 05 63 A8 41 ED 8A"  //    SHA-256
+// #define TEST_HOST_FINGERPRINT "3A BB E6 3D AF 75 6C 50 16 B6 B8 5F 52 01 5F D8 E8 AC BE 27 7C 50 87 B1 27 A6 05 63 A8 41 ED 8A"  //    SHA-256
 
 TFT_eSPI display = TFT_eSPI();
 
@@ -24,15 +35,33 @@ const int jsonMaxSize = 384;
 
 void setup() {
 
+  // Serial.begin(115200);
 
+
+  //initialising display
   display.init();
-
   display.setRotation(6);
   display.fillScreen(BLACK);
   display.fillRect(2, 1, 128, 128, BLACK);
 
+  //Title Screen
+  String title1 = "  Crypto", title2 = "  Tracker", subtitle = "\n   Track all your\n   favourite coins\n   at one place !!";
+  display.setTextSize(2);
+  display.setCursor( 5 , 20 );
+  display.setTextColor(RED);
+  display.println(title1);
+  display.setTextColor(GREEN);
+  display.println(title2);
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.println(subtitle);
+  display.fillRect(2,  1, 128,  3, CYAN);
+  display.fillRect(2,  4,   3, 123, CYAN);
+  display.fillRect(2, 126,128,  3, CYAN);
+  display.fillRect(127, 4,  3, 123, CYAN);
 
-  Serial.begin(115200);
+  delay(2000);
+
 
   // Connect to the WiFI
   WiFi.mode(WIFI_STA);
@@ -40,55 +69,60 @@ void setup() {
   delay(100);
 
   // Attempt to connect to Wifi network:
-  // Serial.print("Connecting Wifi: ");
-  // Serial.println(ssid);
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
-    // Serial.print(".");
     delay(500);
   }
-  // Serial.println("");
-  // Serial.println("WiFi connected");
-  // Serial.println("IP address: ");
-  // IPAddress ip = WiFi.localIP();
-  // Serial.println(ip);
-
-  //--------
-
   // client.setFingerprint(TEST_HOST_FINGERPRINT);
   client.setInsecure(); //Fingerprint wasn't able to be verified so, we removed the check
-  // Serial.println(doc["market_data"]["current_price"]["usd"]);
-  // String temp1 = doc["market_data"];
-  // float temp1 = doc["market_data"]["price_change_percentage_24h_in_currency"]["usd"];
-  // float temp1 = doc['community_score'];
-  // float temp1 = doc[0]["current_price"];
-  // float temp2 = doc[0]["price_change_percentage_24h"];
-  // String id = doc[0]["id"];
-  // float pr = doc["bitcoin"]["usd"];
-  // float cap = doc["usd-coin"]["usd"];
-  // Serial.println(id);
-  // Serial.println(pr);
-  // Serial.println(cap);
-  // Serial.println(typeof(doc["market_data"]["current_price"]["usd"]));
-  // Serial.println(doc);
+
+
+  display.fillRect(2, 1, 128, 128, BLACK);  //for clearing screen
+
+
+    //rendering the UI skeleton
+
+    //displaying coin name
+    display.setCursor( name_offset_x_1, name_offset_y_1 );
+    display.setTextSize(2);
+    display.setTextColor(WHITE);
+    display.print("CoinName");
+
+
+    //displaying price of coin
+    display.setCursor( padding_x_1, name_offset_y_1 + 2*line_spacing_1 );
+    display.setTextSize(1);
+    display.setTextColor(YELLOW);
+    display.print("Price:$ ");
+    display.setTextColor(WHITE);
+    display.print("2000");
+
+    //displaying change in last 24h
+    display.setTextColor(YELLOW);
+    display.setCursor( padding_x_1, name_offset_y_1 + 3*line_spacing_1 );
+    display.print("Last 24h: ");
+    display.setTextColor(GREEN);
+    display.setTextColor(WHITE);
+    display.print("3.04%");
+    
+    //displaying market cap
+    display.setTextColor(YELLOW);
+    display.setCursor( padding_x_1, name_offset_y_1 + 4*line_spacing_1 );
+    display.print("Market Cap:");
+    display.setCursor( padding_x_1, name_offset_y_1 + 5*line_spacing_1 );
+    display.setTextColor(WHITE);
+    display.print("$ 5000000.00");
+
+    //displaying 24hr volume
+    display.setTextColor(YELLOW);
+    display.setCursor( padding_x_1, name_offset_y_1 + 6*line_spacing_1 );
+    display.print("24h vol:");
+    display.setCursor( padding_x_1, name_offset_y_1 + 7*line_spacing_1 );
+    display.setTextColor(WHITE);
+    display.print("35000.00");
 
 
 
-  // float ethereum_usd = doc["ethereum"]["usd"]; // 3961.66
-  // float ethereum_eur = doc["ethereum"]["eur"]; // 3261.73
-
-  // long bitcoin_usd = doc["bitcoin"]["usd"]; // 48924
-  // long bitcoin_eur = doc["bitcoin"]["eur"]; // 40281
-
-  // Serial.print("ethereum_usd: ");
-  // Serial.println(ethereum_usd);
-  // Serial.print("ethereum_eur: ");
-  // Serial.println(ethereum_eur);
-
-  // Serial.print("bitcoin_usd: ");
-  // Serial.println(bitcoin_usd);
-  // Serial.print("bitcoin_eur: ");
-  // Serial.println(bitcoin_eur);
 }
 
 DynamicJsonDocument makeHTTPRequest( String request ) {
@@ -106,9 +140,7 @@ DynamicJsonDocument makeHTTPRequest( String request ) {
   // Send HTTP request
   client.print(F("GET "));
   // This is the second half of a request (everything that comes after the base URL)
-  // client.print("/api/v3/coins/bitcoin?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false");
   client.print( request );
-  // client.print("/api/v3/simple/price?ids=ethereum%2Cbitcoin&vs_currencies=usd%2Ceur");
   
   client.println(F(" HTTP/1.1"));
 
@@ -152,8 +184,6 @@ DynamicJsonDocument makeHTTPRequest( String request ) {
     // Serial.println("BAD");
   }
 
-  // DynamicJsonDocument doc(192);
-
   DeserializationError error = deserializeJson(doc, client);
 
   if (!error) return doc; 
@@ -165,23 +195,28 @@ DynamicJsonDocument makeHTTPRequest( String request ) {
   }
 }
 
-String coin_dat2[]= {"bitcoin","ethereum","tether","binancecoin","usd-coin","ripple","cardano","dogcoin"};
+String coin_dat3[]= {"Bitcoin  ","Ethereum ","Tether   ","Binance  ","USD Coin ","Ripple   ","Cardano  ","Dogcoin  "};
+String coin_codes[]= {"bitcoin","ethereum","tether","binancecoin","usd-coin","ripple","cardano","dogcoin"};
+
+String request1_1 = "/api/v3/simple/price?ids=";
+String request1_2 = "&vs_currencies=usd&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true";
+String request2 = "/api/v3/simple/price?ids=bitcoin%2Cethereum%2Ctether%2Cbinancecoin%2Cripple%2Cusd-coin%2Ccardano%2Cdogecoin&vs_currencies=usd";
 
 void loop() {
   // put your main code here, to run repeatedly:
-  String request1 = "/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true";
-  String request2 = "/api/v3/simple/price?ids=bitcoin%2Cethereum%2Ctether%2Cbinancecoin%2Cripple%2Cusd-coin%2Ccardano%2Cdogecoin&vs_currencies=usd";
 
   for(int i=0;i<8;i++){
-    DynamicJsonDocument doc(jsonMaxSize) ;
-    doc = makeHTTPRequest(request1);
 
-    infoScreen( doc, display, coin_dat2[i], i );
-
+    DynamicJsonDocument doc1(jsonMaxSize) ;
     DynamicJsonDocument doc2(jsonMaxSize) ;
+    doc1 = makeHTTPRequest( request1_1 + coin_codes[i] + request1_2);
     doc2 = makeHTTPRequest(request2);
-    priceTraker(doc2, display, i);
-  }
 
+    delay(4000);
+
+    infoScreen( doc1, display, coin_dat3[i], i );
+    priceTraker(doc2, display, i);
+    
+  }
 
 }
