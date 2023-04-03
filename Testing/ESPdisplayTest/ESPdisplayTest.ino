@@ -12,12 +12,15 @@ void setup() {
 
   display.setRotation(6);
   display.fillScreen(BLACK);
-  // display.fillRect(2, 1, 128, 128, BLACK);
+  display.fillRect(2, 1, 128, 128, BLACK);
   display.setCursor(10,20);
   display.print("Shlok");
 
-  // display.setCursor(2,1);
+  // Checking Display Corners
   display.drawPixel(2,1,WHITE);
+  display.drawPixel(129,1,WHITE);
+  display.drawPixel(2,128,WHITE);
+  display.drawPixel(129,128,WHITE);
 
   // for(int i=0;i<10;i++){
   //   display.setRotation(i);
