@@ -91,7 +91,7 @@ void setup() {
 
 
     //displaying price of coin
-    display.setCursor( padding_x_1, name_offset_y_1 + 2*line_spacing_1 );
+    display.setCursor( padding_x_1, name_offset_y_1 + 4*line_spacing_1/3 );
     display.setTextSize(1);
     display.setTextColor(YELLOW);
     display.print("Price:$ ");
@@ -196,7 +196,7 @@ DynamicJsonDocument makeHTTPRequest( String request ) {
   }
 }
 
-String coin_dat3[]= {"Bitcoin  ","Ethereum ","Tether   ","Binance  ","USD Coin ","Ripple   ","Cardano  ","Dogcoin  "};
+String coin_dat3[]= {"Bitcoin  ","Ethereum ","Tether   ","Binance  ","USD Coin ","Ripple   ","Cardano  ","Dogecoin  "};
 String coin_codes[]= {"bitcoin","ethereum","tether","binancecoin","usd-coin","ripple","cardano","dogcoin"};
 
 String request1_1 = "/api/v3/simple/price?ids=";

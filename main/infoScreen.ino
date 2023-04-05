@@ -32,10 +32,10 @@ void infoScreen( DynamicJsonDocument doc, TFT_eSPI display, String name, int coi
     //displaying price of coin
     display.setTextSize(1);
 
-    display.setCursor( 54, name_offset_y + 2*line_spacing );
+    display.setCursor( 54, name_offset_y + 4*line_spacing/3 );
     display.setTextColor(WHITE,BLACK);
     float temp = doc[coin_dat1[coin_index]]["usd"];
-    display.print((String)temp);
+    display.print((String)temp+"    ");
 
     //displaying change in last 24h
     
@@ -48,12 +48,12 @@ void infoScreen( DynamicJsonDocument doc, TFT_eSPI display, String name, int coi
     display.setCursor( padding_x, name_offset_y + 5*line_spacing );
     temp = doc[coin_dat1[coin_index]]["usd_market_cap"];
     display.setTextColor(WHITE,BLACK);
-    display.print("$"+(String)temp);
+    display.print("$"+(String)temp+"   ");
 
     //displaying last 24hr volume
     display.setCursor( padding_x, name_offset_y + 7*line_spacing );
     temp = doc[coin_dat1[coin_index]]["usd_24h_vol"];
-    display.print("$"+(String)temp);
+    display.print("$"+(String)temp+"    ");
 
 
 }
